@@ -11,15 +11,15 @@ protected:
   shared_ptr<RayTracer>  m_rayTracer;
   RayTracer::Settings    m_rayTracerSettings;
   RayTracer::Stats       m_rayTracerStats;
-  GuiDropDownList*       m_resolutionList;
+  GuiDropDownList*       m_resolutionList = nullptr;
 
-  bool                   m_showWireframe;
-  bool                   m_showPhotons;
-  bool                   m_showPhotonMap;
+  bool                   m_showWireframe = false;
+  bool                   m_showPhotons = false;
+  bool                   m_showPhotonMap = false;
 
   /** Tracks the last time that the scene was updated in the ray tracer. */
-  RealTime               m_lastSceneUpdateTime;
-  RealTime               m_lastPhotonUpdateTime;
+  RealTime               m_lastSceneUpdateTime = 0;
+  RealTime               m_lastPhotonUpdateTime = 0;
 
   /** Called from onInit */
   void makeGUI();
