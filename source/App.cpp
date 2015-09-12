@@ -1,7 +1,6 @@
 /** \file App.cpp */
 #include "App.h"
-
-#include <iostream>
+#include "Log.h"
 
 // Tells C++ to invoke command-line main() function even on OS X and Win32.
 G3D_START_AT_MAIN();
@@ -59,8 +58,6 @@ void App::onRenderButton() {
 }
 
 
-
-
 void App::onInit() {
     GApp::onInit();
     renderDevice->setSwapBuffersAutomatically(true);
@@ -82,23 +79,97 @@ void App::onInit() {
     onResolutionChange();
 
     loadScene(developerWindow->sceneEditorWindow->selectedSceneName());
+}
 
-    for(auto i = scene()->modelTable().begin(); i.isValid(); i++) {
-      logPrintf("Model: %s\n", i->value->name().c_str());
-      shared_ptr<ArticulatedModel> model = dynamic_pointer_cast<ArticulatedModel>(i->value);
 
-      struct cb : public ArticulatedModel::MeshCallback {
-        virtual void operator()
-           (shared_ptr<ArticulatedModel> model,
-            ArticulatedModel::Mesh* mesh) {
-          logPrintf("  Mesh: %s\n", mesh->name.c_str());
-          logPrintf("  Material: %s\n", mesh->material->bsdf()->hasMirror() ? "true" : "false");
+void App::onAfterLoadScene(const Any& any, const String& sceneName) {
+  rtDebugLogLn("Finished Loading Scene %s", sceneName.c_str());
+
+  struct Mirror {
+    Vector3 p1, p2, normal;
+  };
+
+  struct RemoveMirrorsMeshCallback : public ArticulatedModel::MeshCallback {
+    shared_ptr<Scene> m_scene;
+    Array<Mirror> m_mirrors;
+
+    RemoveMirrorsMeshCallback(shared_ptr<Scene> scene) : m_scene(scene) {}
+
+
+    virtual void operator()
+        (shared_ptr<ArticulatedModel> model,
+         ArticulatedModel::Mesh* mesh) override {
+      rtDebugLogLn("  Mesh: %s", mesh->name.c_str());
+
+      // Is the material for this mesh a mirror?
+      if(mesh->material->bsdf()->hasMirror()) {
+        auto& indexArray = mesh->cpuIndexArray;
+        auto& vertexArray = mesh->geometry->cpuVertexArray.vertex;
+
+        if(mesh->triangleCount() == 2) {
+          const Point3 p1 = vertexArray[indexArray[0]].position,
+                       p2 = vertexArray[indexArray[1]].position,
+                       p3 = vertexArray[indexArray[2]].position;
+          Plane plane(p1, p2, p3);
+
+          Mirror mirror;
+          for(auto i = indexArray.begin(); i != indexArray.end(); i++) {
+            if(!plane.fuzzyContains(vertexArray[*i].position)) {
+              rtDebugLogLn("    Non coplanar mirror.");
+              return;
+            }
+
+            Point3 p2 = vertexArray[*i].position;
+            if(p2 != p1 && (p2 - p1).y == 0) {
+              mirror.p1 = p1;
+              mirror.p2 = p2;
+              mirror.p1.y = 0;
+              mirror.p2.y = 0;
+              mirror.normal = plane.normal();
+            }
+          }
+
+          m_mirrors.push_back(mirror);
+
+          const int index = model->meshArray().findIndex(mesh);
+          debugAssert(index >= 0);
+          model->removeMesh(mesh);
+
+          rtDebugLogLn("    Found mirror (%s, %s, %s).",
+              mirror.p1.toString().c_str(),
+              mirror.p2.toString().c_str(),
+              mirror.normal.toString().c_str());
+
+        } else {
+          rtDebugLogLn("    Mirror is not a quad.");
         }
-      };
-
-      cb callback;
-      model->forEachMesh(callback);
+      } else {
+        rtDebugLogLn("    Not a mirror.");
+      }
     }
+  };
+
+  RemoveMirrorsMeshCallback callback(scene());
+
+  // If we're in duplication mode, remove mirrors
+  for(auto i = scene()->modelTable().begin(); i.isValid(); i++) {
+    rtDebugLogLn("Model: %s", i->value->name().c_str());
+    shared_ptr<ArticulatedModel> model = dynamic_pointer_cast<ArticulatedModel>(i->value);
+
+    model->forEachMesh(callback);
+  }
+
+  rtDebugLogLn("found %d mirrors", callback.m_mirrors.size());
+
+  if(callback.m_mirrors.size() == 2) { // Is this the ** case
+    rtDebugLogLn("Detected ** case");
+
+  } else if(callback.m_mirrors.size() == 4) { // Is this the *2222 case
+    rtDebugLogLn("Detected *2222 case");
+
+  } else { // This is *333, *632, or *442
+
+  }
 }
 
 

@@ -29,7 +29,7 @@
       light1 = Light { 
         bulbPower = Power3(60); 
         castsShadows = true; 
-        frame = CFrame::fromXYZYPRDegrees(0, 1.92, 0, 0, -90, 0 ); 
+        frame = CFrame::fromXYZYPRDegrees(0.33, 1.92, -0.33, 0, -90, 0 ); 
         shadowMapSize = Vector2int16(1024, 1024); 
         spotHalfAngleDegrees = 45; 
         spotSquare = true;
@@ -40,7 +40,7 @@
       light2 = Light { 
         bulbPower = Power3(60); 
         castsShadows = true; 
-        frame = CFrame::fromXYZYPRDegrees(0, 1.92, 0, 0, 0, 0 ); 
+        frame = CFrame::fromXYZYPRDegrees(0.33, 1.92, -0.33, 0, 0, 0 ); 
         shadowMapSize = Vector2int16(1024, 1024 ); 
         spotHalfAngleDegrees = 45; 
         spotSquare = true; 
@@ -51,7 +51,7 @@
       light3 = Light { 
         bulbPower = Power3(60); 
         castsShadows = true; 
-        frame = CFrame::fromXYZYPRDegrees(0, 1.92, 0, 90, 0, 0 ); 
+        frame = CFrame::fromXYZYPRDegrees(0.33, 1.92, -0.33, 90, 0, 0 ); 
         shadowMapSize = Vector2int16(1024, 1024 ); 
         spotHalfAngleDegrees = 45; 
         spotSquare = true; 
@@ -62,7 +62,7 @@
       light4 = Light { 
         bulbPower = Power3(60); 
         castsShadows = true; 
-        frame = CFrame::fromXYZYPRDegrees(0, 1.92, 0, -90, 0, 0 ); 
+        frame = CFrame::fromXYZYPRDegrees(0.33, 1.92, -0.33, -90, 0, 0 ); 
         shadowMapSize = Vector2int16(1024, 1024 ); 
         spotHalfAngleDegrees = 45; 
         spotSquare = true; 
@@ -73,7 +73,7 @@
       light5 = Light { 
         bulbPower = Power3(60); 
         castsShadows = true; 
-        frame = CFrame::fromXYZYPRDegrees(0, 1.92, 0, 180, 0, 180 ); 
+        frame = CFrame::fromXYZYPRDegrees(0.33, 1.92, -0.33, 180, 0, 180 ); 
         shadowMapSize = Vector2int16(1024, 1024 ); 
         extent = Vector2(0.75, 0.75);
         spotHalfAngleDegrees = 45; 
@@ -88,23 +88,18 @@
 
   models = { 
       boxModel = ArticulatedModel::Specification { 
-        filename = "mirror*2222.obj";
-        preprocess = (setMaterial("frontWall/frontWall",
+        filename = "mirror*442.obj";
+        preprocess = (setMaterial("backWall/backWall",
                         UniversalMaterial::Specification {
                           lambertian = Color3(0.0);
                           glossy = Color4(Color3(0.95), mirror());
                         }, true);
-                      setMaterial("backWall/backWall",
-                        UniversalMaterial::Specification {
-                          lambertian = Color3(0.0);
-                          glossy = Color4(Color3(0.95), mirror());
-                      }, true);
                       setMaterial("rightWall/rightWall",
                         UniversalMaterial::Specification {
                           lambertian = Color3(0.0);
                           glossy = Color4(Color3(0.95), mirror());
                       }, true);
-                      setMaterial("leftWall/leftWall",
+                      setMaterial("diagonalWall/diagonalWall",
                         UniversalMaterial::Specification {
                           lambertian = Color3(0.0);
                           glossy = Color4(Color3(0.95), mirror());
@@ -113,7 +108,7 @@
       }; 
   };
 
-  name = "Mirror *2222"; 
+  name = "Mirror *442"; 
 
 } 
 

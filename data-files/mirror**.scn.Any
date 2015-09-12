@@ -99,21 +99,11 @@
                           lambertian = Color3(0.0);
                           glossy = Color4(Color3(0.95), mirror());
                       }, true);
-                      setMaterial("rightWall/rightWall",
-                        UniversalMaterial::Specification {
-                          lambertian = Color3(0.0);
-                          glossy = Color4(Color3(0.95), mirror());
-                      }, true);
-                      setMaterial("leftWall/leftWall",
-                        UniversalMaterial::Specification {
-                          lambertian = Color3(0.0);
-                          glossy = Color4(Color3(0.95), mirror());
-                      }, true);
                       );
       }; 
   };
 
-  name = "Mirror *2222"; 
+  name = "Mirror **"; 
 
 } 
 

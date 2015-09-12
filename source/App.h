@@ -5,6 +5,7 @@
 #include <G3D/G3DAll.h>
 #include "RayTracer.h"
 
+
 /** Application framework. */
 class App : public GApp {
 protected:
@@ -31,6 +32,8 @@ public:
   virtual void onInit() override;
 
   virtual void onGraphics3D(RenderDevice* rd, Array<shared_ptr<Surface> >& posed3D) override;
+
+  virtual void onAfterLoadScene(const Any& any, const String& sceneName) override;
 
   void onRenderButton();
   void onResolutionChange();
